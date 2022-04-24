@@ -24,8 +24,8 @@ app.component('expand', Expand)
   .component('refresh-left', RefreshLeft)
 
 // if (process.env.NODE_ENV === 'production') {
-const { mockXHR } = require('../mock')
-mockXHR()
+// const { mockXHR } = require('../mock')
+// mockXHR()
 // }
 
 app.component('svg-icon', SvgIcon)

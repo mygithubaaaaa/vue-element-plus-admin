@@ -1,24 +1,47 @@
 import request from '@/utils/request'
 
-export function userLogin (data) {
+export function login(data) {
   return request({
-    url: '/vue-admin-template/user/login',
+    url: '/user/login',
     method: 'post',
     data
   })
 }
 
-export function getInfo (token) {
+export function register(data) {
   return request({
-    url: '/vue-admin-template/user/info',
-    method: 'get',
-    params: { token }
+    url: '/user/register',
+    method: 'post',
+    data
   })
 }
 
-export function logout () {
+export function getInfo() {
   return request({
-    url: '/vue-admin-template/user/logout',
+    url: '/user/info',
+    method: 'get'
+  })
+}
+
+export function logout() {
+  return request({
+    url: '/user/logout',
     method: 'post'
+  })
+}
+
+export function save(data) {
+  return request({
+    url: '/user/update',
+    method: 'post',
+    data
+  })
+}
+
+export function updatePassword(data) {
+  return request({
+    url: '/user/updatePassword',
+    method: 'post',
+    data
   })
 }

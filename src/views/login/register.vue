@@ -2,14 +2,14 @@
   <div class="login-container">
     <el-form
       ref="refForm"
-      :model="loginForm"
-      :rules="loginRules"
+      :model="registerForm"
+      :rules="registerRules"
       class="login-form"
       auto-complete="on"
       label-position="left"
     >
       <div class="title-container">
-        <h3 class="title">登陆</h3>
+        <h3 class="title">注册</h3>
       </div>
 
       <el-form-item prop="username">
@@ -18,8 +18,8 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
+          v-model="registerForm.username"
+          placeholder="用户名，建议用学号"
           name="username"
           type="text"
           tabindex="1"
@@ -34,32 +34,59 @@
         <el-input
           :key="passwordType"
           ref="password"
-          v-model="loginForm.password"
+          v-model="registerForm.password"
           :type="passwordType"
           placeholder="Password"
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
 
-      <el-button
-        :loading="loginButtonLoading"
-        type="primary"
-        style="width:100%;margin-bottom:30px;"
-        @click.prevent="handleLogin"
-      >登陆
-      </el-button>
+      <el-form-item prop="phone">
+        <span class="svg-container">
+          <svg-icon icon-class="phone" />
+        </span>
+        <el-input
+          ref="phone"
+          v-model="registerForm.phone"
+          placeholder="手机号"
+          name="phone"
+          type="text"
+          tabindex="3"
+          auto-complete="on"
+        />
+      </el-form-item>
+
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="email" />
+        </span>
+        <el-input
+          v-model="registerForm.email"
+          placeholder="电子邮箱"
+          name="email"
+          type="text"
+          tabindex="4"
+          auto-complete="on"
+        />
+      </el-form-item>
+
       <el-button
         :loading="registerButtonLoading"
         type="primary"
+        style="width:100%;margin-bottom:30px;"
+        @click.prevent="handleRegister"
+      >注册
+      </el-button>
+      <el-button
+        type="primary"
         style="width:100%;margin-bottom:30px;margin-left: 0"
-        @click.prevent="toRegister"
-      >去注册
+        @click.prevent="toLogin"
+      >去登陆
       </el-button>
     </el-form>
   </div>
@@ -68,14 +95,16 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import { reactive, ref, toRef, nextTick, watch } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+// import { useStore } from 'vuex'
+import { useRoute } from 'vue-router'
+import { register } from '@/api/user'
+import router from '@/router'
 export default {
-  name: 'Login',
+  name: 'Register',
   setup () {
-    const router = useRouter()
+    // const router = useRouter()
     const route = useRoute()
-    const store = useStore()
+    // const store = useStore()
     const password = ref(null)
     const refForm = ref(null)
     const validateUsername = (rule, value, callback) => {
@@ -94,22 +123,23 @@ export default {
     }
 
     const state = reactive({
-      loginForm: {
-        username: 'admin',
-        password: '11111111'
+      registerForm: {
+        username: '',
+        password: '',
+        phone: '',
+        email: '',
+        group: ''
       },
-      loginRules: {
+      registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
-      loginButtonLoading: false,
       registerButtonLoading: false,
       passwordType: 'password',
       redirect: undefined
     })
-    const loginForm = toRef(state, 'loginForm')
-    const loginRules = toRef(state, 'loginRules')
-    const loginButtonLoading = toRef(state, 'loginButtonLoading')
+    const registerForm = toRef(state, 'registerForm')
+    const registerRules = toRef(state, 'registerRules')
     const registerButtonLoading = toRef(state, 'registerButtonLoading')
     const passwordType = toRef(state, 'passwordType')
     const redirect = toRef(state, 'redirect')
@@ -126,15 +156,16 @@ export default {
     watch(route, (routes) => {
       redirect.value = routes.query && routes.query.redirect
     })
-    const handleLogin = async () => {
+    const handleRegister = async () => {
       refForm.value.validate(valid => {
         if (valid) {
-          loginButtonLoading.value = true
-          store.dispatch('user/login', loginForm.value).then(() => {
-            router.push({ path: redirect.value || '/' })
-            loginButtonLoading.value = false
-          }).catch(() => {
-            loginButtonLoading.value = false
+          registerButtonLoading.value = true
+          register(this.registerForm).then(() => {
+            router.push({ path: this.redirect || '/login' })
+            registerButtonLoading.value = false
+          }).catch((e) => {
+            registerButtonLoading.value = false
+            console.log(e)
           })
         } else {
           console.log('error submit!!')
@@ -142,20 +173,19 @@ export default {
         }
       })
     }
-    const toRegister = () => {
-      router.push({ path: '/register' })
+    const toLogin = () => {
+      router.push({ path: '/login' })
     }
     return {
-      loginForm,
-      loginRules,
+      registerForm,
+      registerRules,
       refForm,
       passwordType,
       redirect,
-      loginButtonLoading,
       registerButtonLoading,
-      toRegister,
       showPwd,
-      handleLogin,
+      handleRegister,
+      toLogin,
       password
     }
   }

@@ -1,15 +1,16 @@
 <template>
   <div class="login-container">
     <el-form
-      ref="refForm"
-      :model="loginForm"
-      :rules="loginRules"
+      ref="registerForm"
+      :model="registerForm"
+      :rules="registerRules"
       class="login-form"
       auto-complete="on"
       label-position="left"
     >
+
       <div class="title-container">
-        <h3 class="title">登陆</h3>
+        <h3 class="title">通知系统-注册</h3>
       </div>
 
       <el-form-item prop="username">
@@ -18,8 +19,8 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
-          placeholder="Username"
+          v-model="registerForm.username"
+          placeholder="用户名，建议用学号"
           name="username"
           type="text"
           tabindex="1"
@@ -34,50 +35,71 @@
         <el-input
           :key="passwordType"
           ref="password"
-          v-model="loginForm.password"
+          v-model="registerForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
-          @keyup.enter="handleLogin"
         />
         <span class="show-pwd" @click="showPwd">
           <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
         </span>
       </el-form-item>
+      <el-form-item prop="phone">
+        <span class="svg-container">
+          <svg-icon icon-class="phone" />
+        </span>
+        <el-input
+          ref="phone"
+          v-model="registerForm.phone"
+          placeholder="手机号"
+          name="phone"
+          type="text"
+          tabindex="3"
+          auto-complete="on"
+        />
+      </el-form-item>
 
-      <el-button
-        :loading="loginButtonLoading"
-        type="primary"
-        style="width:100%;margin-bottom:30px;"
-        @click.prevent="handleLogin"
-      >登陆
-      </el-button>
+      <el-form-item prop="email">
+        <span class="svg-container">
+          <svg-icon icon-class="email" />
+        </span>
+        <el-input
+          v-model="registerForm.email"
+          placeholder="电子邮箱"
+          name="email"
+          type="text"
+          tabindex="4"
+          auto-complete="on"
+        />
+      </el-form-item>
+
       <el-button
         :loading="registerButtonLoading"
         type="primary"
-        style="width:100%;margin-bottom:30px;margin-left: 0"
-        @click.prevent="toRegister"
-      >去注册
+        style="width:100%;margin-bottom:30px;"
+        v-on="handleRegister"
+      >注册
       </el-button>
+      <el-button
+        type="primary"
+        style="width:100%;margin-bottom:30px;margin-left: 0"
+        v-on="toLogin"
+      >去登陆
+      </el-button>
+
     </el-form>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { reactive, ref, toRef, nextTick, watch } from 'vue'
-import { useStore } from 'vuex'
-import { useRouter, useRoute } from 'vue-router'
+import { register } from '@/api/user'
+
 export default {
-  name: 'Login',
-  setup () {
-    const router = useRouter()
-    const route = useRoute()
-    const store = useStore()
-    const password = ref(null)
-    const refForm = ref(null)
+  name: 'Register',
+  data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('请输入正确的用户名'))
@@ -86,87 +108,79 @@ export default {
       }
     }
     const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密码不能少于8位数字'))
+      if (value.length < 6) {
+        callback(new Error('密码不能少于6位'))
       } else {
         callback()
       }
     }
-
-    const state = reactive({
-      loginForm: {
-        username: 'admin',
-        password: '11111111'
+    return {
+      registerForm: {
+        username: '',
+        password: '',
+        phone: '',
+        email: '',
+        group: ''
       },
-      loginRules: {
+      registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
-      loginButtonLoading: false,
       registerButtonLoading: false,
       passwordType: 'password',
       redirect: undefined
-    })
-    const loginForm = toRef(state, 'loginForm')
-    const loginRules = toRef(state, 'loginRules')
-    const loginButtonLoading = toRef(state, 'loginButtonLoading')
-    const registerButtonLoading = toRef(state, 'registerButtonLoading')
-    const passwordType = toRef(state, 'passwordType')
-    const redirect = toRef(state, 'redirect')
-    const showPwd = () => {
-      if (passwordType.value === 'password') {
-        passwordType.value = ''
-      } else {
-        passwordType.value = 'password'
-      }
-      nextTick(() => {
-        password.value.focus()
-      })
     }
-    watch(route, (routes) => {
-      redirect.value = routes.query && routes.query.redirect
-    })
-    const handleLogin = async () => {
-      refForm.value.validate(valid => {
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
+      },
+      immediate: true
+    }
+  },
+  methods: {
+    showPwd() {
+      if (this.passwordType === 'password') {
+        this.passwordType = ''
+      } else {
+        this.passwordType = 'password'
+      }
+      this.$nextTick(() => {
+        this.$refs.password.focus()
+      })
+    },
+    handleRegister() {
+      this.$refs.registerForm.validate(valid => {
         if (valid) {
-          loginButtonLoading.value = true
-          store.dispatch('user/login', loginForm.value).then(() => {
-            router.push({ path: redirect.value || '/' })
-            loginButtonLoading.value = false
-          }).catch(() => {
-            loginButtonLoading.value = false
+          this.registerButtonLoading = true
+          register(this.registerForm).then(() => {
+            this.$router.push({ path: this.redirect || '/login' })
+            this.registerButtonLoading = false
+          }).catch((e) => {
+            this.registerButtonLoading = false
+            console.log(e)
           })
         } else {
           console.log('error submit!!')
           return false
         }
       })
-    }
-    const toRegister = () => {
-      router.push({ path: '/register' })
-    }
-    return {
-      loginForm,
-      loginRules,
-      refForm,
-      passwordType,
-      redirect,
-      loginButtonLoading,
-      registerButtonLoading,
-      toRegister,
-      showPwd,
-      handleLogin,
-      password
+    },
+    toLogin() {
+      this.$router.push({ path: '/login' })
     }
   }
-
 }
 </script>
 
 <style lang="scss">
-$bg: #ffffff;
-$light_gray: rgb(0, 0, 0);
-$cursor: rgb(0, 0, 0);
+/* 修复input 背景不协调 和光标变色 */
+/* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
+
+$bg: #283443;
+$light_gray: #fff;
+$cursor: #fff;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -200,7 +214,7 @@ $cursor: rgb(0, 0, 0);
 
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(94, 94, 94, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 5px;
     color: #454545;
   }
@@ -208,9 +222,9 @@ $cursor: rgb(0, 0, 0);
 </style>
 
 <style lang="scss" scoped>
-$bg: #e6e6e670;
+$bg: #2d3a4b;
 $dark_gray: #889aa4;
-$light_gray: rgba(238, 238, 238, 0.63);
+$light_gray: #eee;
 
 .login-container {
   min-height: 100%;
@@ -219,22 +233,17 @@ $light_gray: rgba(238, 238, 238, 0.63);
   overflow: hidden;
 
   .login-form {
-    position: absolute;
-    width: 480px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    width: 520px;
     max-width: 100%;
-    padding: 45px 35px 60px 35px;
-    border-radius: 10px;
+    padding: 160px 35px 0;
     margin: 0 auto;
-    background-color: rgb(255, 255, 255);
     overflow: hidden;
   }
 
   .tips {
     font-size: 14px;
-    color: rgb(0, 0, 0);
+    color: #fff;
     margin-bottom: 10px;
 
     span {
@@ -257,7 +266,7 @@ $light_gray: rgba(238, 238, 238, 0.63);
 
     .title {
       font-size: 26px;
-      color: #202020;
+      color: $light_gray;
       margin: 0px auto 40px auto;
       text-align: center;
       font-weight: bold;
