@@ -1,1 +1,1 @@
-export const pageTitle = 'Vue3 Admin'
+export const pageTitle = '通知系统'

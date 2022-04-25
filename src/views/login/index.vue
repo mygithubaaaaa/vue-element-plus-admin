@@ -149,9 +149,16 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #ffffff;
-$light_gray: rgb(0, 0, 0);
+
+</style>
+
+<style lang="scss" scoped>
+$white: rgb(255,255,255);
 $cursor: rgb(0, 0, 0);
+
+$bg: #e6e6e670;
+$dark_gray: #889aa4;
+$light_gray: rgba(238, 238, 238, 0.63);
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -159,8 +166,12 @@ $cursor: rgb(0, 0, 0);
   }
 }
 
-/* reset element-ui css */
 .login-container {
+  min-height: 100%;
+  width: 100%;
+  background-color: $bg;
+  overflow: hidden;
+
   .el-input {
     display: inline-block;
     height: 47px;
@@ -172,7 +183,7 @@ $cursor: rgb(0, 0, 0);
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      color: rgb(0,0,0);
       height: 47px;
       caret-color: $cursor;
 
@@ -189,19 +200,6 @@ $cursor: rgb(0, 0, 0);
     border-radius: 5px;
     color: #454545;
   }
-}
-</style>
-
-<style lang="scss" scoped>
-$bg: #e6e6e670;
-$dark_gray: #889aa4;
-$light_gray: rgba(238, 238, 238, 0.63);
-
-.login-container {
-  min-height: 100%;
-  width: 100%;
-  background-color: $bg;
-  overflow: hidden;
 
   .login-form {
     position: absolute;
@@ -216,19 +214,6 @@ $light_gray: rgba(238, 238, 238, 0.63);
     background-color: rgb(255, 255, 255);
     overflow: hidden;
   }
-
-  .tips {
-    font-size: 14px;
-    color: rgb(0, 0, 0);
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
-  }
-
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;

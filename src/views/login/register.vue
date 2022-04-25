@@ -181,9 +181,11 @@ export default {
 </script>
 
 <style lang="scss">
-$bg: #ffffff;
-$light_gray: rgb(0, 0, 0);
 $cursor: rgb(0, 0, 0);
+
+$bg: #e6e6e670;
+$dark_gray: #889aa4;
+$light_gray: rgba(238, 238, 238, 0.63);
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -204,7 +206,7 @@ $cursor: rgb(0, 0, 0);
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: $light_gray;
+      color: rgb(0,0,0);
       height: 47px;
       caret-color: $cursor;
 
@@ -248,19 +250,6 @@ $light_gray: rgba(238, 238, 238, 0.63);
     background-color: rgb(255, 255, 255);
     overflow: hidden;
   }
-
-  .tips {
-    font-size: 14px;
-    color: rgb(0, 0, 0);
-    margin-bottom: 10px;
-
-    span {
-      &:first-of-type {
-        margin-right: 16px;
-      }
-    }
-  }
-
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
