@@ -85,7 +85,7 @@
       <el-button
         type="primary"
         style="width:100%;margin-bottom:30px;margin-left: 0"
-        @click.prevent="toLogin"
+        @click="toLogin"
       >去登陆
       </el-button>
     </el-form>
@@ -93,7 +93,7 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validateEmail, validateMobilePhone, validatePassword, validateUsername } from '@/utils/validate'
 import { reactive, ref, toRef, nextTick, watch } from 'vue'
 // import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
@@ -107,21 +107,6 @@ export default {
     // const store = useStore()
     const password = ref(null)
     const refForm = ref(null)
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密码不能少于8位数字'))
-      } else {
-        callback()
-      }
-    }
-
     const state = reactive({
       registerForm: {
         username: '',
@@ -132,7 +117,9 @@ export default {
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        phone: [{ required: true, trigger: 'blur', validator: validateMobilePhone }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }]
       },
       registerButtonLoading: false,
       passwordType: 'password',
@@ -160,8 +147,8 @@ export default {
       refForm.value.validate(valid => {
         if (valid) {
           registerButtonLoading.value = true
-          register(this.registerForm).then(() => {
-            router.push({ path: this.redirect || '/login' })
+          register(registerForm.value).then(() => {
+            router.push({ path: redirect.value || '/login' })
             registerButtonLoading.value = false
           }).catch((e) => {
             registerButtonLoading.value = false

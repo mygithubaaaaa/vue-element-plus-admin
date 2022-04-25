@@ -51,7 +51,7 @@ const actions = {
         const { data } = response
 
         if (!data) {
-          return reject(new Error('Verification failed, please Login again.'))
+          return reject(new Error('验证失败，请重新登陆'))
         }
 
         const { name, avatar } = data

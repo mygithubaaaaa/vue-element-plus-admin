@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -36,7 +36,7 @@
           ref="password"
           v-model="loginForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
@@ -58,7 +58,7 @@
         :loading="registerButtonLoading"
         type="primary"
         style="width:100%;margin-bottom:30px;margin-left: 0"
-        @click.prevent="toRegister"
+        @click="toRegister"
       >去注册
       </el-button>
     </el-form>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { validUsername } from '@/utils/validate'
+import { validatePassword, validateUsername } from '@/utils/validate'
 import { reactive, ref, toRef, nextTick, watch } from 'vue'
 import { useStore } from 'vuex'
 import { useRouter, useRoute } from 'vue-router'
@@ -78,21 +78,6 @@ export default {
     const store = useStore()
     const password = ref(null)
     const refForm = ref(null)
-    const validateUsername = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('请输入正确的用户名'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密码不能少于8位数字'))
-      } else {
-        callback()
-      }
-    }
-
     const state = reactive({
       loginForm: {
         username: 'admin',

@@ -17,7 +17,7 @@ service.interceptors.request.use(
 
     if (store.getters.token) {
       // let each request carry token
-      // ['X-Token'] is a custom headers key
+      // ['token'] is a custom headers key
       // please modify it according to the actual situation
       config.headers.token = getToken()
     }
@@ -36,7 +36,7 @@ service.interceptors.response.use(
     const res = response.data
     if (res.code !== 0) {
       ElMessage({
-        message: res.message || '错误',
+        message: res.msg || '错误',
         type: 'error',
         duration: 5 * 1000
       })
@@ -44,7 +44,7 @@ service.interceptors.response.use(
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
       if (res.code === 401 || res.code === 50012 || res.code === 50014) {
         // to re-login
-        ElMessageBox.confirm('You have been logged out, you can cancel to stay on this page, or log in again', 'Confirm logout', {
+        ElMessageBox.confirm('登陆过期, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: '重新登陆',
           cancelButtonText: '取消',
           type: 'warning'
@@ -54,7 +54,7 @@ service.interceptors.response.use(
           })
         })
       }
-      return Promise.reject(new Error(res.message || 'Error'))
+      return Promise.reject(new Error(res.message || '错误'))
     } else {
       return res
     }
