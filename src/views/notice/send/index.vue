@@ -1,8 +1,6 @@
 <template>
   <div class="app-container">
-    <el-button type="primary" @click="createButton">
-      <span>创建通知</span>
-    </el-button>
+
     <!--    创建通知对话-->
     <el-dialog v-model="dialogFormVisible" title="创建通知">
       <el-form :model="form">
@@ -96,7 +94,7 @@
             {{ scope.row.username }}
           </template>
         </el-table-column>
-        <el-table-column label="真实群组" min-width="3%">
+        <el-table-column label="班级" min-width="3%">
           <template #default="scope">
             {{ scope.row.realGroup }}
           </template>
@@ -110,6 +108,24 @@
       </el-table>
     </el-dialog>
 
+    <el-form :inline="true" :model="queryForm">
+      <el-form-item label="通知名">
+        <el-input v-model="queryForm.noticeName" placeholder="通知名" />
+      </el-form-item>
+      <el-form-item label="状态">
+        <el-select v-model="queryForm.isSend" placeholder="状态">
+          <el-option label="已发送" value="true" />
+          <el-option label="未发送" value="false" />
+          <el-option label="所有" value="null" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchData">查询</el-button>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="createButton" >创建通知</el-button>
+      </el-form-item>
+    </el-form>
     <!--    已发送通知表-->
     <el-table
       v-loading="listLoading"
@@ -151,12 +167,12 @@
           <span v-if="scope.row.isSend">{{ scope.row.sendTime }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="ctime" label="创建时间" min-width="15%">
-        <template #default="scope">
-          <i class="el-icon-time" />
-          <span>{{ scope.row.ctime }}</span>
-        </template>
-      </el-table-column>
+<!--      <el-table-column align="center" prop="ctime" label="创建时间" min-width="15%">-->
+<!--        <template #default="scope">-->
+<!--          <i class="el-icon-time" />-->
+<!--          <span>{{ scope.row.ctime }}</span>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
       <el-table-column label="操作" min-width="15%" align="center">
         <template #default="scope">
           <el-button
@@ -181,9 +197,9 @@
     </el-table>
     <div class="pagination">
       <el-pagination
-        :current-page="pageNum"
+        :current-page="queryForm.pageNum"
         :page-sizes="[5, 10, 20, 40]"
-        :page-size="pageSize"
+        :page-size="queryForm.pageSize"
         layout="total, sizes,prev, pager, next"
         :total="total"
         prev-text="上一页"
@@ -229,8 +245,6 @@ export default {
         username: ''
       }],
       readInfoLoading: false,
-      pageNum: 1,
-      pageSize: 5,
       total: 0,
       listLoading: true,
       form: {
@@ -246,6 +260,12 @@ export default {
         groupId: 0,
         id: 0
       },
+      queryForm: {
+        noticeName: '',
+        isSend: null,
+        pageNum: 1,
+        pageSize: 10
+      },
       dialogFormVisible: false,
       updateFormVisible: false,
       readInfoTableVisible: false,
@@ -259,11 +279,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      const data = {
-        pageNum: this.pageNum,
-        pageSize: this.pageSize
-      }
-      getCreatedList(data).then(response => {
+      getCreatedList(this.queryForm).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
@@ -285,11 +301,11 @@ export default {
     },
     // 分页
     handleSizeChange: function(size) {
-      this.pageSize = size
+      this.queryForm.pageSize = size
       this.fetchData()
     },
     handleCurrentChange: function(currentPage) {
-      this.pageNum = currentPage
+      this.queryForm.pageNum = currentPage
       this.fetchData()
     },
     handleSelect(item) {

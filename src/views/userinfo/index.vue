@@ -1,8 +1,8 @@
 <template>
   <div class="app-container">
     <el-form ref="form" :model="form" label-width="120px" :disabled="!isEditing">
-      <el-form-item label="用户名">
-        <el-input v-model="form.username" />
+      <el-form-item label="用户名" disabled="true">
+        <el-input v-model="form.username" disabled/>
       </el-form-item>
       <el-form-item label="邮箱">
         <el-input v-model="form.email" />
@@ -10,7 +10,7 @@
       <el-form-item label="手机">
         <el-input v-model="form.phone" />
       </el-form-item>
-      <el-form-item label="组织">
+      <el-form-item label="班级">
         <el-input v-model="form.realGroup" />
       </el-form-item>
     </el-form>

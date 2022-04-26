@@ -178,12 +178,12 @@ $light_gray: rgba(238, 238, 238, 0.63);
     width: 85%;
 
     input {
-      background: transparent;
+      background: #5a5e66;
       border: 0px;
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: rgb(0,0,0);
+      color: $cursor;
       height: 47px;
       caret-color: $cursor;
 
@@ -216,7 +216,7 @@ $light_gray: rgba(238, 238, 238, 0.63);
   }
   .svg-container {
     padding: 6px 5px 6px 15px;
-    color: $dark_gray;
+    color: $bg;
     vertical-align: middle;
     width: 30px;
     display: inline-block;

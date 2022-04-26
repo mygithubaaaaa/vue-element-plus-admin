@@ -7,7 +7,6 @@
       :data="data2"
       :props="defaultProps"
       :filter-node-method="filterNode"
-      class="filter-tree"
       default-expand-all
     >
       <template #default="{ node, data }">
@@ -42,7 +41,6 @@
       </template>
     </el-dialog>
     <el-dialog
-      :model="deleteDialog"
       v-model="dialogVisibleForDelete"
       width="30%"
     >
@@ -68,21 +66,7 @@ export default {
   data() {
     return {
       filterText: '',
-      data2: [{
-        id: 1,
-        label: '层级1',
-        children: [{
-          id: 4,
-          label: 'Level two 1-1',
-          children: [{
-            id: 9,
-            label: 'Level three 1-1-1'
-          }, {
-            id: 10,
-            label: 'Level three 1-1-2'
-          }]
-        }]
-      }],
+      data2: null,
       defaultProps: {
         children: 'son',
         label: 'groupName'
@@ -143,10 +127,20 @@ export default {
 
     onDeleteGroup(groupId) {
       deleteGroup(groupId).then((response) => {
-        this.dialogFormVisible = false
         this.$message.success('删除成功')
+        this.dialogVisibleForDelete = false
       })
     }
   }
 }
 </script>
+<style>
+.custom-tree-node {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  padding-right: 8px;
+}
+</style>

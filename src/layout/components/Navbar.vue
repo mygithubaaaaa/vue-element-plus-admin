@@ -12,8 +12,8 @@
     <div class="right-menu">
       <el-dropdown class="avatar-container" trigger="click">
         <div class="avatar-wrapper">
-          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />
-          <div class="user-name">admin</div>
+<!--          <img :src="avatar + '?imageView2/1/w/80/h/80'" class="user-avatar" />-->
+          <div class="user-name">{{ username }}</div>
           <el-icon class="el-icon-caret-bottom ">
             <arrow-down />
           </el-icon>
@@ -21,10 +21,10 @@
         <template v-slot:dropdown>
           <el-dropdown-menu class="user-dropdown">
             <router-link to="/">
-              <el-dropdown-item>Home</el-dropdown-item>
+              <el-dropdown-item>主页</el-dropdown-item>
             </router-link>
             <el-dropdown-item  >
-              <span @click="logout"  style="display:block;">Log Out</span>
+              <span @click="logout"  style="display:block;">注销</span>
             </el-dropdown-item>
           </el-dropdown-menu>
         </template>
@@ -50,6 +50,7 @@ export default {
     const route = useRoute()
     const sidebar = computed(() => store.getters.sidebar)
     const avatar = computed(() => store.getters.avatar)
+    const username = computed(() => store.getters.name)
     const toggleSideBar = () => {
       store.dispatch('app/toggleSideBar')
     }
@@ -73,7 +74,8 @@ export default {
       logout,
       toggleSideBar,
       avatar,
-      refresh
+      refresh,
+      username
     }
   }
 }
