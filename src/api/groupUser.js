@@ -7,3 +7,19 @@ export function queryGroup(name) {
     params: { groupName: name }
   })
 }
+
+export function join(inviteCode) {
+  return request({
+    url: '/groupUser/joinByInviteCode',
+    method: 'post',
+    data: { inviteCode: inviteCode }
+  })
+}
+
+export function getMyGroup(data) {
+  return request({
+    url: '/groupUser/getMyGroup',
+    method: 'post',
+    data
+  })
+}

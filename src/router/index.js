@@ -48,7 +48,7 @@ export const constantRoutes = [
         path: 'index',
         name: 'Info',
         component: () => import('@/views/userinfo/index'),
-        meta: { title: '个人信息', icon: 'el-icon-s-help' }
+        meta: { title: '个人信息', icon: 'example' }
       }
     ]
   },
@@ -78,34 +78,19 @@ export const constantRoutes = [
     path: '/group',
     component: Layout,
     name: 'group',
-    meta: { title: '组织', icon: 'el-icon-s-help' },
+    meta: { title: '组织', icon: 'tree' },
     children: [
       {
         path: 'groupTree',
         name: 'GroupTree',
         component: () => import('@/views/group/grouptree/index'),
         meta: { title: '组织树', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/example',
-    name: 'example',
-    redirect: '/example/test',
-    component: Layout,
-    meta: { title: 'Example', icon: 'example', affix: true },
-    children: [
-      {
-        path: 'test',
-        name: 'Test',
-        component: () => import(/* webpackChunkName: "test" */ '../views/test'),
-        meta: { title: 'test', affix: true }
       },
       {
-        path: 'about',
-        name: 'About',
-        component: () => import(/* webpackChunkName: "about" */ '../views/About'),
-        meta: { title: 'About', affix: true }
+        path: 'mygroup',
+        name: 'MyGroup',
+        component: () => import('@/views/group/mygroup/index'),
+        meta: { title: '我管理的组织', icon: 'tree' }
       }
     ]
   },

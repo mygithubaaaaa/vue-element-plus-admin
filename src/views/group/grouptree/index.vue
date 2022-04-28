@@ -1,5 +1,27 @@
 <template>
   <div class="app-container">
+    <el-button type="primary" @click="dialogForJoin = true" >申请加入</el-button>
+    <el-dialog v-model="dialogForJoin" title="申请加入" :close-on-click-modal='false'>
+      <el-form>
+        <el-form-item label="邀请码" :label-width="formLabelWidth" >
+          <el-input v-model="inviteCode" autocomplete="off" @input="clearGroupName()" ></el-input>
+          <el-button type="primary" @click="getGroupName" >查询组名</el-button>
+        </el-form-item>
+        <el-form-item label="组名" :label-width="formLabelWidth">
+          <el-input v-model="groupName" autocomplete="off"  disabled/>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogForJoin = false">取消</el-button>
+          <el-button
+            type="primary"
+            @click="onJoin"
+          >确认</el-button>
+        </span>
+      </template>
+    </el-dialog>
+
     <el-input v-model="filterText" placeholder="Filter keyword" style="margin-bottom:30px;" />
 
     <el-tree
@@ -18,7 +40,7 @@
         </span>
       </template>
     </el-tree>
-    <el-dialog v-model="dialogFormVisible" :title="thisGroupName">
+    <el-dialog v-model="dialogFormVisible" :title="thisGroupName" :close-on-click-modal='false'>
       <el-form :model="form">
         <el-form-item label="节点类型">
           <el-radio-group v-model="form.parentGroup" size="large">
@@ -43,6 +65,7 @@
     <el-dialog
       v-model="dialogVisibleForDelete"
       width="30%"
+      :close-on-click-modal='false'
     >
       <span>确认删除群组{{ deleteDialog.groupName }}</span>
       <template #footer>
@@ -59,7 +82,8 @@
 </template>
 
 <script>
-import { createGroup, deleteGroup, getGroupTree } from '@/api/group'
+import { createGroup, deleteGroup, getGroupNameByInviteCode, getGroupTree } from '@/api/group'
+import { join } from '@/api/groupUser'
 
 export default {
 
@@ -78,6 +102,9 @@ export default {
       },
       dialogFormVisible: false,
       dialogVisibleForDelete: false,
+      dialogForJoin: false,
+      groupName: '',
+      inviteCode: '',
       formLabelWidth: '140px',
       parentGroup: 0,
       thisGroupId: 0,
@@ -101,7 +128,7 @@ export default {
   methods: {
     filterNode(value, data) {
       if (!value) return true
-      return data.label.indexOf(value) !== -1
+      return data.groupName.indexOf(value) !== -1
     },
 
     append(data) {
@@ -130,7 +157,26 @@ export default {
         this.$message.success('删除成功')
         this.dialogVisibleForDelete = false
       })
+    },
+    clearGroupName() {
+      this.groupName = ''
+    },
+
+    onJoin() {
+      join(this.inviteCode).then(() => {
+        this.$message.success('成功加入')
+        this.dialogForJoin = false
+      })
+    },
+    getGroupName() {
+      getGroupNameByInviteCode(this.inviteCode).then((response) => {
+        this.groupName = response.data
+      }).catch(() => {
+        this.groupName = ''
+      }
+      )
     }
+
   }
 }
 </script>

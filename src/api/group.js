@@ -22,3 +22,11 @@ export function deleteGroup(groupId) {
     data: { groupId: groupId }
   })
 }
+
+export function getGroupNameByInviteCode(inviteCode) {
+  return request({
+    url: '/group/getGroupNameByInviteCode',
+    method: 'get',
+    params: { inviteCode: inviteCode }
+  })
+}
