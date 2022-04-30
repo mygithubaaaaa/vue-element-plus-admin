@@ -46,27 +46,23 @@
       </el-table-column>
       <el-table-column class-name="status-col" label="状态" min-width="5%" align="center">
         <template #default="scope">
-          <el-tag :type="statusFilter(scope.row.state)">{{ scope.row.isSend }}</el-tag>
+          <el-tag type="success" v-if="scope.row.isSend" >已读</el-tag>
+          <el-tag type="danger" v-else >未读</el-tag>
         </template>
       </el-table-column>
       <el-table-column align="center" prop="sendTime" label="发布时间" min-width="15%">
         <template #default="scope">
           <i class="el-icon-time" />
-          <span v-if="scope.row.isSend">{{ scope.row.sendTime }}</span>
+          <span>{{ scope.row.sendTime }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column align="center" prop="ctime" label="创建时间" min-width="15%">-->
-<!--        <template #default="scope">-->
-<!--          <i class="el-icon-time" />-->
-<!--          <span>{{ scope.row.ctime }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="操作" min-width="15%" align="center">
         <template #default="scope">
           <el-button
             type="primary"
             class="el-button--text"
-            @click="onRead(scope.row.id)"
+            @click="onRead(scope.row)"
+            v-if="!scope.row.isSend"
           >阅读
           </el-button>
         </template>
@@ -132,7 +128,7 @@ export default {
     statusFilter(status) {
       const statusMap = {
         published: 'success',
-        draft: 'gray',
+        draft: 'danger',
         deleted: 'danger'
       }
       return statusMap[status]
@@ -158,9 +154,10 @@ export default {
       this.form.groupId = item.groupId
     },
 
-    onRead(noticeId) {
-      read(noticeId).then(() => {
+    onRead(notice) {
+      read(notice.id).then(() => {
         this.$message.success('已读')
+        notice.isSend = true
       })
     }
   }

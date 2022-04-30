@@ -30,22 +30,15 @@ export const constantRoutes = [
 
   {
     path: '/',
-    component: Layout,
-    meta: { icon: 'dashboard', affix: true },
-    redirect: '/dashboard',
-    children: [{
-      path: 'dashboard',
-      name: 'dashboard',
-      component: () => import(/* webpackChunkName: "dashboard" */ '../views/Index'),
-      meta: { title: 'Home', icon: 'dashboard' }
-    }]
+    redirect: '/info',
+    hidden: true
   },
   {
     path: '/info',
     component: Layout,
     children: [
       {
-        path: 'index',
+        path: '',
         name: 'Info',
         component: () => import('@/views/userinfo/index'),
         meta: { title: '个人信息', icon: 'example' }
@@ -58,6 +51,7 @@ export const constantRoutes = [
     component: Layout,
     name: 'notice',
     meta: { title: '通知', icon: 'table' },
+    redirect: '/notice/send',
     children: [
       {
         path: 'send',
@@ -79,6 +73,7 @@ export const constantRoutes = [
     component: Layout,
     name: 'group',
     meta: { title: '组织', icon: 'tree' },
+    redirect: '/group/mygroup',
     children: [
       {
         path: 'groupTree',
@@ -91,6 +86,12 @@ export const constantRoutes = [
         name: 'MyGroup',
         component: () => import('@/views/group/mygroup/index'),
         meta: { title: '我管理的组织', icon: 'tree' }
+      },
+      {
+        path: 'joinedgroup',
+        name: 'JoinedGroup',
+        component: () => import('@/views/group/joinedgroup/index'),
+        meta: { title: '我加入的组织', icon: 'tree' }
       }
     ]
   },

@@ -42,7 +42,7 @@ service.interceptors.response.use(
       })
 
       // 50008: Illegal token; 50012: Other clients logged in; 50014: Token expired;
-      if (res.code === 401 || res.code === 50012 || res.code === 50014) {
+      if (res.code === 401 || res.code === 10004 || res.code === 50014) {
         // to re-login
         ElMessageBox.confirm('登陆过期, you can cancel to stay on this page, or log in again', 'Confirm logout', {
           confirmButtonText: '重新登陆',

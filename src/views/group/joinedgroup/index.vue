@@ -1,43 +1,6 @@
 <template>
   <div class="app-container">
-
-    <!--组织成员-->
-    <el-dialog v-model="userListTableVisible" title="组织成员">
-      <el-table
-        v-loading="userListLoading"
-        :data="userList"
-        element-loading-text="Loading"
-        border
-        fit
-        highlight-current-row
-      >
-        <el-table-column label="用户名" min-width="3%">
-          <template #default="scope">
-            {{ scope.row.username }}
-          </template>
-        </el-table-column>
-        <el-table-column label="班级" min-width="3%">
-          <template #default="scope">
-            {{ scope.row.realGroup }}
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="pagination">
-        <el-pagination
-          :current-page="userListQuery.pageNum"
-          :page-sizes="[5, 10, 20, 40]"
-          :page-size="userListQuery.pageSize"
-          layout="total, sizes,prev, pager, next"
-          :total="userListQuery.total"
-          prev-text="上一页"
-          next-text="下一页"
-          @size-change="handleUserListQuerySizeChange"
-          @current-change="handleUserListQueryCurrentChange"
-        />
-      </div>
-    </el-dialog>
-
-    <!--    我管理的组织表-->
+    <!--    我加入的组织表-->
     <el-table
       v-loading="listLoading"
       :data="list"
@@ -56,26 +19,13 @@
           {{ scope.row.groupName }}
         </template>
       </el-table-column>
-      <el-table-column label="父组织名" min-width="10%" align="center">
+      <el-table-column label="角色" min-width="10%" align="center">
         <template #default="scope">
-          <span>{{ scope.row.parentGroupName }}</span>
+          <el-tag type="success" v-if="scope.row.role === 0" >普通人员</el-tag>
+          <el-tag type="danger" v-else >管理员</el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="邀请码" :show-overflow-tooltip="true" min-width="20%" align="center">
-        <template #default="scope">
-          {{ scope.row.inviteCode }}
-        </template>
-      </el-table-column>
-      <el-table-column label="操作" min-width="15%" align="center">
-        <template #default="scope">
-          <el-button
-            type="primary"
-            class="el-button--text"
-            @click="getUserList(scope.row.id)"
-          >查看成员
-          </el-button>
-        </template>
-      </el-table-column>
+
     </el-table>
     <div class="pagination">
       <el-pagination
@@ -95,20 +45,9 @@
 </template>
 
 <script>
-import { getMyGroup, getUserList } from '@/api/groupUser'
+import { getMyJoinedGroup, getUserList } from '@/api/groupUser'
 
 export default {
-
-  filters: {
-    statusFilter(status) {
-      const statusMap = {
-        published: 'success',
-        draft: 'gray',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
-  },
   data() {
     return {
       list: [
@@ -138,8 +77,8 @@ export default {
         groupId: 0
       },
       queryForm: {
-        noticeName: '',
-        isSend: null,
+        groupName: '',
+        role: null,
         pageNum: 1,
         pageSize: 10
       },
@@ -160,7 +99,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getMyGroup(this.queryForm).then(response => {
+      getMyJoinedGroup(this.queryForm).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false

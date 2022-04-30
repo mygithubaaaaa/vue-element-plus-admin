@@ -23,3 +23,19 @@ export function getMyGroup(data) {
     data
   })
 }
+
+export function getMyJoinedGroup(data) {
+  return request({
+    url: '/groupUser/getMyJoinedGroup',
+    method: 'post',
+    data
+  })
+}
+
+export function getUserList(data) {
+  return request({
+    url: '/groupUser/getUserList',
+    method: 'post',
+    data
+  })
+}

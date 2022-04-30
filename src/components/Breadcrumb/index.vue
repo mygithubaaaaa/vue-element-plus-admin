@@ -21,19 +21,9 @@ export default {
     const route = useRoute()
     const router = useRouter()
     const levelList = ref(null)
-    const isDashboard = (routes) => {
-      const name = routes && routes.name
-      if (!name) {
-        return false
-      }
-      return name.trim().toLocaleLowerCase() === 'Dashboard'.toLocaleLowerCase()
-    }
+
     const getBreadcrumb = () => {
-      let matched = route.matched.filter(item => item.meta && item.meta.title)
-      const first = matched[0]
-      if (!isDashboard(first)) {
-        matched = [{ path: '/dashboard', meta: { title: 'System' } }].concat(matched)
-      }
+      const matched = route.matched.filter(item => item.meta && item.meta.title)
       levelList.value = matched.filter(item => item.meta && item.meta.title && item.meta.breadcrumb !== false)
     }
 
@@ -57,7 +47,6 @@ export default {
     return {
       levelList,
       getBreadcrumb,
-      isDashboard,
       pathCompile,
       handleLink
     }

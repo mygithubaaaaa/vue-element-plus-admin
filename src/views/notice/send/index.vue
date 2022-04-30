@@ -167,23 +167,17 @@
           <span v-if="scope.row.isSend">{{ scope.row.sendTime }}</span>
         </template>
       </el-table-column>
-<!--      <el-table-column align="center" prop="ctime" label="创建时间" min-width="15%">-->
-<!--        <template #default="scope">-->
-<!--          <i class="el-icon-time" />-->
-<!--          <span>{{ scope.row.ctime }}</span>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="操作" min-width="15%" align="center">
         <template #default="scope">
           <el-button
             v-if="!scope.row.isSend"
             type="primary"
             class="el-button--text"
-            @click="onSendNotice(scope.row.id)"
-          >发送通知
+            @click="onSendNotice(scope.row)"
+          >发送
           </el-button>
           <el-button v-if="!scope.row.isSend" type="primary" class="el-button--text" @click="updateButton(scope.row)">
-            更新通知
+            更新
           </el-button>
           <el-button
             v-if="scope.row.isSend"
@@ -292,9 +286,10 @@ export default {
       })
     },
     // 发送
-    onSendNotice(noticeId) {
-      sendNotice({ noticeId: noticeId }).then(response => {
+    onSendNotice(notice) {
+      sendNotice({ noticeId: notice.id }).then(response => {
         this.$message.success('发送成功')
+        // notice.isSend = true
       }).catch(e => {
         console.log(e)
       })

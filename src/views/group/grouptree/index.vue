@@ -22,7 +22,7 @@
       </template>
     </el-dialog>
 
-    <el-input v-model="filterText" placeholder="Filter keyword" style="margin-bottom:30px;" />
+    <el-input v-model="filterText" placeholder="根据组织名过滤" style="margin-bottom:30px;" />
 
     <el-tree
       ref="tree2"
@@ -30,13 +30,13 @@
       :props="defaultProps"
       :filter-node-method="filterNode"
       default-expand-all
+      indent="30"
     >
       <template #default="{ node, data }">
         <span class="custom-tree-node">
           <span>{{ node.label }}</span>
           <el-tag @click="append(data)"> 增加</el-tag>
           <el-tag @click="remove(data)"> 删除 </el-tag>
-
         </span>
       </template>
     </el-tree>
@@ -188,5 +188,8 @@ export default {
   justify-content: space-between;
   font-size: 14px;
   padding-right: 8px;
+  height: 40px;
+
 }
+
 </style>

@@ -80,8 +80,8 @@ export default {
     const refForm = ref(null)
     const state = reactive({
       loginForm: {
-        username: 'admin',
-        password: '11111111'
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -116,7 +116,7 @@ export default {
         if (valid) {
           loginButtonLoading.value = true
           store.dispatch('user/login', loginForm.value).then(() => {
-            router.push({ path: redirect.value || '/' })
+            router.push({ path: redirect.value || '/info' })
             loginButtonLoading.value = false
           }).catch(() => {
             loginButtonLoading.value = false
