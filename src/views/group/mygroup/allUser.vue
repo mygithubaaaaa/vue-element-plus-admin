@@ -15,9 +15,6 @@
       <el-form-item>
         <el-button type="primary" @click="fetchData">查询</el-button>
       </el-form-item>
-<!--      <el-form-item>-->
-<!--        <el-button type="primary" @click="createButton" >创建通知</el-button>-->
-<!--      </el-form-item>-->
     </el-form>
 
     <!--    我管理的组织表-->
@@ -39,11 +36,6 @@
         {{ scope.row.username }}
       </template>
     </el-table-column>
-<!--      <el-table-column label="真实组织" min-width="10%">-->
-<!--        <template #default="scope">-->
-<!--          {{ scope.row.realGroup }}-->
-<!--        </template>-->
-<!--      </el-table-column>-->
       <el-table-column label="角色" :show-overflow-tooltip="true" min-width="20%" align="center">
         <template #default="scope">
             <el-tag v-if="scope.row.role===1" type="warning">老师</el-tag>
@@ -84,7 +76,6 @@
 </template>
 
 <script>
-import { getUserList } from '@/api/groupUser'
 import { ElMessage } from 'element-plus'
 import { pageQueryUser, setUserRole } from '@/api/user'
 
@@ -109,34 +100,14 @@ export default {
           role: ''
         }
       ],
-      userList: [{
-        id: 0,
-        username: ''
-      }],
-      userListLoading: false,
       total: 0,
       listLoading: true,
-      form: {
-        header: '',
-        content: '',
-        groupName: '',
-        groupId: 0
-      },
       queryForm: {
         username: '',
         role: null,
         pageNum: 1,
         pageSize: 10
-      },
-      userListQuery: {
-        groupId: null,
-        pageNum: 1,
-        pageSize: 10,
-        total: 0
-      },
-      userListTableVisible: false,
-      formLabelWidth: '140px',
-      formTitle: ''
+      }
     }
   },
   created() {
@@ -162,27 +133,6 @@ export default {
     },
     handleSelect(item) {
       this.form.groupId = item.id
-    },
-    // 分页
-    handleUserListQuerySizeChange: function(size) {
-      this.userListQuery.pageSize = size
-      this.userListLoading = true
-      getUserList(this.userListQuery).then((response) => {
-        this.userListLoading = false
-        const data = response.data
-        this.userList = data.records
-        this.userListQuery.total = data.total
-      })
-    },
-    handleUserListQueryCurrentChange: function(currentPage) {
-      this.userListQuery.pageNum = currentPage
-      this.userListLoading = true
-      getUserList(this.userListQuery).then((response) => {
-        this.userListLoading = false
-        const data = response.data
-        this.userList = data.records
-        this.userListQuery.total = data.total
-      })
     },
     onSetRole(user, role) {
       setUserRole({ userId: user.id, role: role }).then(() => {
