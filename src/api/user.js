@@ -16,6 +16,22 @@ export function register(data) {
   })
 }
 
+export function sendCode(email) {
+  return request({
+    url: '/user/sendCode',
+    method: 'post',
+    data: { email: email }
+  })
+}
+
+export function setUserRole(data) {
+  return request({
+    url: '/user/setUserRole',
+    method: 'post',
+    data
+  })
+}
+
 export function getInfo() {
   return request({
     url: '/user/info',
@@ -41,6 +57,14 @@ export function save(data) {
 export function updatePassword(data) {
   return request({
     url: '/user/updatePassword',
+    method: 'post',
+    data
+  })
+}
+
+export function pageQueryUser(data) {
+  return request({
+    url: '/user/pageQueryUser',
     method: 'post',
     data
   })

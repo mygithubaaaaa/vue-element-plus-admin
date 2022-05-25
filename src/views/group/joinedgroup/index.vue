@@ -22,7 +22,8 @@
       <el-table-column label="角色" min-width="10%" align="center">
         <template #default="scope">
           <el-tag type="success" v-if="scope.row.role === 0" >普通人员</el-tag>
-          <el-tag type="danger" v-else >管理员</el-tag>
+          <el-tag type="warning" v-if="scope.row.role === 1" >管理员</el-tag>
+          <el-tag type="error" v-else >创建者</el-tag>
         </template>
       </el-table-column>
 

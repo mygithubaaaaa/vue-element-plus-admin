@@ -19,7 +19,7 @@
         <el-input
           ref="username"
           v-model="registerForm.username"
-          placeholder="用户名，建议用学号"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -46,20 +46,20 @@
         </span>
       </el-form-item>
 
-      <el-form-item prop="phone">
-        <span class="svg-container">
-          <svg-icon icon-class="phone" />
-        </span>
-        <el-input
-          ref="phone"
-          v-model="registerForm.phone"
-          placeholder="手机号"
-          name="phone"
-          type="text"
-          tabindex="3"
-          auto-complete="on"
-        />
-      </el-form-item>
+<!--      <el-form-item prop="phone">-->
+<!--        <span class="svg-container">-->
+<!--          <svg-icon icon-class="phone" />-->
+<!--        </span>-->
+<!--        <el-input-->
+<!--          ref="phone"-->
+<!--          v-model="registerForm.phone"-->
+<!--          placeholder="手机号"-->
+<!--          name="phone"-->
+<!--          type="text"-->
+<!--          tabindex="3"-->
+<!--          auto-complete="on"-->
+<!--        />-->
+<!--      </el-form-item>-->
 
       <el-form-item prop="email">
         <span class="svg-container">
@@ -73,6 +73,21 @@
           tabindex="4"
           auto-complete="on"
         />
+      </el-form-item>
+
+      <el-form-item prop="code" :inline="true">
+        <span class="svg-container">
+          <svg-icon icon-class="email" />
+        </span>
+        <el-input
+          v-model="registerForm.code"
+          placeholder="验证码"
+          name="code"
+          type="text"
+          tabindex="4"
+          auto-complete="on"
+        />
+        <el-button type="primary" @click="handleSendCode">发送验证码</el-button>
       </el-form-item>
 
       <el-button
@@ -93,12 +108,13 @@
 </template>
 
 <script>
-import { validateEmail, validateMobilePhone, validatePassword, validateUsername } from '@/utils/validate'
+import { validateCode, validateEmail, validatePassword, validateUsername } from '@/utils/validate'
 import { reactive, ref, toRef, nextTick, watch } from 'vue'
 // import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { register } from '@/api/user'
+import { register, sendCode } from '@/api/user'
 import router from '@/router'
+import { ElMessage } from 'element-plus'
 export default {
   name: 'Register',
   setup () {
@@ -111,15 +127,17 @@ export default {
       registerForm: {
         username: '',
         password: '',
-        phone: '',
+        // phone: '',
         email: '',
+        code: '',
         group: ''
       },
       registerRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        phone: [{ required: true, trigger: 'blur', validator: validateMobilePhone }],
-        email: [{ required: true, trigger: 'blur', validator: validateEmail }]
+        // phone: [{ required: true, trigger: 'blur', validator: validateMobilePhone }],
+        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
+        code: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       registerButtonLoading: false,
       passwordType: 'password',
@@ -143,6 +161,24 @@ export default {
     watch(route, (routes) => {
       redirect.value = routes.query && routes.query.redirect
     })
+    const handleSendCode = async () => {
+      sendCode(registerForm.value.email).then(() => {
+        ElMessage({
+          message: '发送验证码成功',
+          type: 'success'
+        })()
+      }).catch((e) => {
+        console.log(e)
+      })
+      // refForm.value.validateField('email', valid => {
+      //   // if (valid) {
+      //
+      //   // } else {
+      //   //   this.$message.success('邮箱无效')
+      //   //   return false
+      //   // }
+      // })
+    }
     const handleRegister = async () => {
       refForm.value.validate(valid => {
         if (valid) {
@@ -172,6 +208,7 @@ export default {
       registerButtonLoading,
       showPwd,
       handleRegister,
+      handleSendCode,
       toLogin,
       password
     }

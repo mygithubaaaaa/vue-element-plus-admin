@@ -1,63 +1,24 @@
 <template>
   <div class="app-container">
 
-    <!--组织成员-->
-    <el-dialog v-model="userListTableVisible" title="组织成员">
-      <el-table
-        v-loading="userListLoading"
-        :data="userList"
-        element-loading-text="Loading"
-        border
-        fit
-        highlight-current-row
-      >
-        <el-table-column label="用户名" min-width="3%">
-          <template #default="scope">
-            {{ scope.row.username }}
-          </template>
-        </el-table-column>
-        <el-table-column label="班级" min-width="3%">
-          <template #default="scope">
-            {{ scope.row.realGroup }}
-          </template>
-        </el-table-column>
-        <el-table-column label="角色" min-width="3%">
-          <template #default="scope">
-            <el-tag v-if="scope.row.role===1" type="warning">管理员</el-tag>
-            <el-tag v-if="scope.row.role===0" type="success">普通人员</el-tag>
-            <el-tag v-if="scope.row.role===2" type="error">创建者</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" min-width="15%" align="center">
-          <template #default="scope">
-            <el-button
-              v-if="scope.row.role === 1"
-              type="primary"
-              class="el-button--text"
-              @click="onSetRole(scope.row, 0)"
-            >设为普通人员
-            </el-button>
-            <el-button v-if="scope.row.role === 0" type="primary" class="el-button--text" @click="onSetRole(scope.row, 1)">
-              设为管理员
-            </el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-
-      <div class="pagination">
-        <el-pagination
-          :current-page="userListQuery.pageNum"
-          :page-sizes="[5, 10, 20, 40]"
-          :page-size="userListQuery.pageSize"
-          layout="total, sizes,prev, pager, next"
-          :total="userListQuery.total"
-          prev-text="上一页"
-          next-text="下一页"
-          @size-change="handleUserListQuerySizeChange"
-          @current-change="handleUserListQueryCurrentChange"
-        />
-      </div>
-    </el-dialog>
+    <el-form :inline="true" :model="queryForm">
+      <el-form-item label="用户名">
+        <el-input v-model="queryForm.username" placeholder="用户名" />
+      </el-form-item>
+      <el-form-item label="角色">
+        <el-select v-model="queryForm.role" placeholder="角色">
+          <el-option label="老师" value="1" />
+          <el-option label="学生" value="0" />
+          <el-option label="所有" value="null" />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="fetchData">查询</el-button>
+      </el-form-item>
+<!--      <el-form-item>-->
+<!--        <el-button type="primary" @click="createButton" >创建通知</el-button>-->
+<!--      </el-form-item>-->
+    </el-form>
 
     <!--    我管理的组织表-->
     <el-table
@@ -73,28 +34,34 @@
           {{ scope.row.id }}
         </template>
       </el-table-column>
-      <el-table-column label="组织名" min-width="10%">
+      <el-table-column label="用户名" min-width="10%">
+      <template #default="scope">
+        {{ scope.row.username }}
+      </template>
+    </el-table-column>
+<!--      <el-table-column label="真实组织" min-width="10%">-->
+<!--        <template #default="scope">-->
+<!--          {{ scope.row.realGroup }}-->
+<!--        </template>-->
+<!--      </el-table-column>-->
+      <el-table-column label="角色" :show-overflow-tooltip="true" min-width="20%" align="center">
         <template #default="scope">
-          {{ scope.row.groupName }}
-        </template>
-      </el-table-column>
-      <el-table-column label="父组织名" min-width="10%" align="center">
-        <template #default="scope">
-          <span>{{ scope.row.parentGroupName }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="邀请码" :show-overflow-tooltip="true" min-width="20%" align="center">
-        <template #default="scope">
-          {{ scope.row.inviteCode }}
+            <el-tag v-if="scope.row.role===1" type="warning">老师</el-tag>
+            <el-tag v-if="scope.row.role===0" type="success">普通人员</el-tag>
+            <el-tag v-if="scope.row.role===2" type="error">管理员</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" min-width="15%" align="center">
         <template #default="scope">
           <el-button
+            v-if="scope.row.role === 1"
             type="primary"
             class="el-button--text"
-            @click="getUserList(scope.row.id)"
-          >查看成员
+            @click="onSetRole(scope.row, 0)"
+          >设为学生
+          </el-button>
+          <el-button v-if="scope.row.role === 0" type="primary" class="el-button--text" @click="onSetRole(scope.row, 1)">
+            设为老师
           </el-button>
         </template>
       </el-table-column>
@@ -117,8 +84,9 @@
 </template>
 
 <script>
-import { getMyGroup, getUserList, setRole } from '@/api/groupUser'
+import { getUserList } from '@/api/groupUser'
 import { ElMessage } from 'element-plus'
+import { pageQueryUser, setUserRole } from '@/api/user'
 
 export default {
 
@@ -137,14 +105,8 @@ export default {
       list: [
         {
           id: 0,
-          groupName: '',
-          parentGroupName: '',
-          inviteCode: '',
-          header: '',
-          isSend: false,
-          content: '',
-          sendTime: '',
-          groupId: 0
+          username: '',
+          role: ''
         }
       ],
       userList: [{
@@ -161,8 +123,8 @@ export default {
         groupId: 0
       },
       queryForm: {
-        noticeName: '',
-        isSend: null,
+        username: '',
+        role: null,
         pageNum: 1,
         pageSize: 10
       },
@@ -183,7 +145,7 @@ export default {
   methods: {
     fetchData() {
       this.listLoading = true
-      getMyGroup(this.queryForm).then(response => {
+      pageQueryUser(this.queryForm).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
@@ -200,17 +162,6 @@ export default {
     },
     handleSelect(item) {
       this.form.groupId = item.id
-    },
-    getUserList(groupId) {
-      this.userListTableVisible = true
-      this.userListLoading = true
-      this.userListQuery.groupId = groupId
-      getUserList(this.userListQuery).then((response) => {
-        this.userListLoading = false
-        const data = response.data
-        this.userList = data.records
-        this.userListQuery.total = data.total
-      })
     },
     // 分页
     handleUserListQuerySizeChange: function(size) {
@@ -234,7 +185,7 @@ export default {
       })
     },
     onSetRole(user, role) {
-      setRole({ userId: user.id, groupId: this.userListQuery.groupId, role: role }).then(() => {
+      setUserRole({ userId: user.id, role: role }).then(() => {
         user.role = role
         ElMessage({
           message: '修改角色成功',

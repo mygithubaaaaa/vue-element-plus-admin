@@ -39,3 +39,11 @@ export function getUserList(data) {
     data
   })
 }
+
+export function setRole(data) {
+  return request({
+    url: '/groupUser/setRole',
+    method: 'post',
+    data
+  })
+}

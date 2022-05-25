@@ -88,6 +88,12 @@ export const constantRoutes = [
         meta: { title: '我管理的组织', icon: 'tree' }
       },
       {
+        path: 'allUser',
+        name: 'allUser',
+        component: () => import('@/views/group/mygroup/allUser'),
+        meta: { title: '用户', icon: 'tree' }
+      },
+      {
         path: 'joinedgroup',
         name: 'JoinedGroup',
         component: () => import('@/views/group/joinedgroup/index'),

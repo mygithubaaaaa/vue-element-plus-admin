@@ -49,6 +49,19 @@ export function validateEmail(rule, value, callback) {
   }
 }
 
+export function validateCode(rule, value, callback) {
+  if (value === '') {
+    callback(new Error('请填写验证码'))
+  } else {
+    if (value !== '') {
+      if (value.length !== 6) {
+        callback(new Error('请输入6位验证码'))
+      }
+    }
+    callback()
+  }
+}
+
 export function validateMobilePhone(rule, value, callback) {
   if (value === '') {
     callback(new Error('手机号不可为空'))
