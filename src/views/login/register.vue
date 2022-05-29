@@ -5,7 +5,7 @@
       :model="registerForm"
       :rules="registerRules"
       class="login-form"
-      auto-complete="on"
+      auto-complete="off"
       label-position="left"
     >
       <div class="title-container">
@@ -14,7 +14,7 @@
 
       <el-form-item prop="username">
         <span class="svg-container">
-          <svg-icon icon-class="user" />
+          <svg-icon icon-class="user"/>
         </span>
         <el-input
           ref="username"
@@ -29,41 +29,26 @@
 
       <el-form-item prop="password">
         <span class="svg-container">
-          <svg-icon icon-class="password" />
+          <svg-icon icon-class="password"/>
         </span>
         <el-input
           :key="passwordType"
           ref="password"
           v-model="registerForm.password"
           :type="passwordType"
-          placeholder="Password"
+          placeholder="密码"
           name="password"
           tabindex="2"
           auto-complete="on"
         />
         <span class="show-pwd" @click="showPwd">
-          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
+          <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'"/>
         </span>
       </el-form-item>
 
-<!--      <el-form-item prop="phone">-->
-<!--        <span class="svg-container">-->
-<!--          <svg-icon icon-class="phone" />-->
-<!--        </span>-->
-<!--        <el-input-->
-<!--          ref="phone"-->
-<!--          v-model="registerForm.phone"-->
-<!--          placeholder="手机号"-->
-<!--          name="phone"-->
-<!--          type="text"-->
-<!--          tabindex="3"-->
-<!--          auto-complete="on"-->
-<!--        />-->
-<!--      </el-form-item>-->
-
       <el-form-item prop="email">
         <span class="svg-container">
-          <svg-icon icon-class="email" />
+          <svg-icon icon-class="email"/>
         </span>
         <el-input
           v-model="registerForm.email"
@@ -75,20 +60,30 @@
         />
       </el-form-item>
 
-      <el-form-item prop="code" :inline="true">
-        <span class="svg-container">
-          <svg-icon icon-class="email" />
-        </span>
-        <el-input
-          v-model="registerForm.code"
-          placeholder="验证码"
-          name="code"
-          type="text"
-          tabindex="4"
-          auto-complete="on"
-        />
-        <el-button type="primary" @click="handleSendCode">发送验证码</el-button>
-      </el-form-item>
+      <el-row >
+        <el-col span="12">
+          <el-form-item>
+            <span class="svg-container">
+            <svg-icon icon-class="email"/>
+            </span>
+            <el-input
+              v-model="registerForm.code"
+              placeholder="验证码"
+              name="code"
+              type="text"
+              tabindex="4"
+              auto-complete="on"
+            >
+
+            </el-input>
+          </el-form-item>
+        </el-col>
+        <el-col span="12">
+          <el-form-item>
+            <el-button  type="primary" @click="handleSendCode">发送验证码</el-button>
+          </el-form-item>
+        </el-col>
+      </el-row>
 
       <el-button
         :loading="registerButtonLoading"
@@ -115,9 +110,10 @@ import { useRoute } from 'vue-router'
 import { register, sendCode } from '@/api/user'
 import router from '@/router'
 import { ElMessage } from 'element-plus'
+
 export default {
   name: 'Register',
-  setup () {
+  setup() {
     // const router = useRouter()
     const route = useRoute()
     // const store = useStore()
@@ -133,11 +129,27 @@ export default {
         group: ''
       },
       registerRules: {
-        username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }],
+        username: [{
+          required: true,
+          trigger: 'blur',
+          validator: validateUsername
+        }],
+        password: [{
+          required: true,
+          trigger: 'blur',
+          validator: validatePassword
+        }],
         // phone: [{ required: true, trigger: 'blur', validator: validateMobilePhone }],
-        email: [{ required: true, trigger: 'blur', validator: validateEmail }],
-        code: [{ required: true, trigger: 'blur', validator: validateCode }]
+        email: [{
+          required: true,
+          trigger: 'blur',
+          validator: validateEmail
+        }],
+        code: [{
+          required: true,
+          trigger: 'blur',
+          validator: validateCode
+        }]
       },
       registerButtonLoading: false,
       passwordType: 'password',
@@ -243,7 +255,7 @@ $light_gray: rgba(238, 238, 238, 0.63);
       -webkit-appearance: none;
       border-radius: 0px;
       padding: 12px 5px 12px 15px;
-      color: rgb(0,0,0);
+      color: rgb(0, 0, 0);
       height: 47px;
       caret-color: $cursor;
 
@@ -287,6 +299,7 @@ $light_gray: rgba(238, 238, 238, 0.63);
     background-color: rgb(255, 255, 255);
     overflow: hidden;
   }
+
   .svg-container {
     padding: 6px 5px 6px 15px;
     color: $dark_gray;
